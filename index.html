@@ -119,28 +119,21 @@
     ];
     let music = document.getElementById('music');
     let currentSongIndex = 0;
-    music.volume = 0.3;
-
     
-    //shuffling song
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
+    function setSong(index) {
+      music.src = songs[index];
+      music.play().catch(error => {
+        console.error("Error playing music:", error);
+      });
     }
-    songs = shuffleArray(songs);
+    music.volume = 0.3;
 
     //function to play next song
     function playNextSong() {
-
       currentSongIndex = (currentSongIndex + 1) % songs.length;
-      music.src = songs[currentSongIndex];
-      music.play().catch(error => {
-        console.error('Error playing music:', error);
-      });
+      setSong(currentSongIndex);
     }
+    
     music.addEventListener("ended", playNextSong);
     //declare funct for calculating (gyro?) activity
     let particles;
