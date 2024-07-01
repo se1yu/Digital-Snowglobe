@@ -1,0 +1,66 @@
+
+body{
+
+  /* flex display (flexible container box)*/ 
+  display: flex;
+  flex-direction: column;
+
+  /*filll entity*/ 
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /*hide if overflow*/
+
+  /*centering items*/
+  justify-content: center;
+  align-items: center;
+}
+#snowglobe {
+  /*sizing*/
+  width: 85vmin;
+  height: 85vmin; 
+
+  /*background*/
+  background: radial-gradient(circle at 50% 120%, #fff, #fff 20%, #4e638d);
+  /*round globe*/ 
+  border-radius: 100%;
+  overflow: hidden;
+
+  margin: auto;
+
+  box-shadow:0px 0px 20px #FFFFFF05;
+  
+}
+
+#particles {
+  height: 75%;
+  width: 100%;
+}
+
+#ground {
+  height: 25%;
+  width: 100%;
+  background: radial-gradient(circle at 50% 120%, #fff, #fff 20%, #38221033);
+}
+
+@keyframes shake {
+  0%;
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(15deg);
+  }
+
+  50% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.shake {
+  animation:shake 1s;
+}
