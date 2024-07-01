@@ -5,44 +5,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Snowglobe</title>
-  <style> 
-    *{
-      padding:0;
-      margin:0;
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
     }
 
 
-    body{
+    body {
 
-      /* flex display (flexible container box)*/ 
+      /* flex display (flexible container box)*/
       display: flex;
       flex-direction: column;
 
-      /*filll entity*/ 
+      /*filll entity*/
       width: 100vw;
       height: 100vh;
-      overflow: hidden; /*hide if overflow*/
+      overflow: hidden;
+      /*hide if overflow*/
 
       /*centering items*/
       justify-content: center;
       align-items: center;
     }
+
     #snowglobe {
-    
+
       /*sizing*/
       width: 85vmin;
-      height: 85vmin; 
+      height: 85vmin;
 
       /*background
       background: radial-gradient(circle at 50% 120%, #fff, #fff 20%, #4e638d);*/
       background: url('/bg.jpg')center/cover;
-      /*round globe*/ 
+      /*round globe*/
       border-radius: 100%;
       overflow: hidden;
 
       margin: auto;
 
-      box-shadow:0px 0px 20px #FFFFFF05;
+      box-shadow: 0px 0px 20px #FFFFFF05;
 
     }
 
@@ -59,6 +61,7 @@
 
     @keyframes shake {
       0%;
+
       100% {
         transform: rotate(0deg);
       }
@@ -77,28 +80,31 @@
     }
 
     .shake {
-      animation:shake 1s;
+      animation: shake 1s;
     }
 
-  
+    
   </style>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
 </head>
 
 <body>
   jingle your ball(s)
-  
+
   <div id="snowglobe">
-    <audio id="music">
-      <source src="music.mp3" type="audio/ogg"></source>
+    <audio id="music" preload="auto">
+      <source src="music.mp3" type="audio/ogg">
+      </source>
     </audio>
     <div id="particles">
     </div>
-    
+
     <div id="ground">
     </div>
-    
+
   </div>
+
+  
   <script>
 
 
@@ -106,47 +112,101 @@
     let globe = document.getElementById("snowglobe");
 
     //declare particles
+    let songs = [
+      "music.mp3",
+      "music2.mp3",
+      "music3.mp3"
+    ];
     let music = document.getElementById('music');
+    let currentSongIndex = 0;
     music.volume = 0.3;
-    let particles;
 
+    
+    //shuffling song
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    songs = shuffleArray(songs);
+
+    //function to play next song
+    function playNextSong() {
+
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      music.src = songs[currentSongIndex];
+      music.play().catch(error => {
+        console.error('Error playing music:', error);
+      });
+    }
+    music.addEventListener("ended", playNextSong);
     //declare funct for calculating (gyro?) activity
-
+    let particles;
     function calculateAcceleration(event) {
 
-      const {x,y,z} = event.accelerationIncludingGravity;
-      const accelerationMagnitude= Math.sqrt(x*x + y*y + z*z);
+      const {x, y, z} = event.accelerationIncludingGravity;
+      const accelerationMagnitude = Math.sqrt(x * x + y * y + z * z);
       return accelerationMagnitude;
     }
 
     function shakeItUp() {
       particles.play();
       globe.classList.add("shake");
+
+      music.play().catch(error => {
+        console.error("Error playing music:", error);
+      });
       setTimeout(() => {globe.classList.remove("shake")}, 1100)
       music.play()
     }
 
+    // Funct to request motion perms and event listner 
+    function enableMotionDetection() {
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener("devicemotion", handleMotionEvent);
+            }
+          })
+          .catch(console.error);
+      } else {
+        // Handle regular permission grants for non-iOS 13+ devices
+        window.addEventListener("devicemotion", handleMotionEvent);
+      }
+    }
+    // Event handler for motion events
+    function handleMotionEvent(event) {
+      const acceleration = calculateAcceleration(event);
+      if (acceleration > 23) {
+        shakeItUp();
+      }
+    }
     tsParticles.loadJSON('particles', 'particles.json')
-    .then(function() {
-      particles = tsParticles.domItem(0);
-      particles.pause()
-      globe.addEventListener('click',()=> {
-        shakeItUp()
+      .then(function () {
+        particles = tsParticles.domItem(0);
+        particles.pause()
+        globe.addEventListener('click', () => {
+          shakeItUp()
+          enableMotionDetection();
+        });
+
+        window.addEventListener("devicemotion", (event) => {
+          const acceleration = calculateAcceleration(event);
+
+          if (acceleration > 23) {
+            shakeItUp()
+          }
+        }
+        );
+
       });
 
-      window.addEventListener("devicemotion",(event) =>{
-        const acceleration = calculateAcceleration(event);
 
-        if (acceleration>23){
-          shakeItUp()
-      }}
-      );
-
-    });
-
-    
   </script>
-  
+
 </body>
 
 </html>
