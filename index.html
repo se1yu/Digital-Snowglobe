@@ -11,41 +11,36 @@
       margin: 0;
     }
 
-
     body {
-
-      /* flex display (flexible container box)*/
+      /* flex display (flexible container box) */
       display: flex;
       flex-direction: column;
 
-      /*filll entity*/
+      /* fill entity */
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      /*hide if overflow*/
+      /* hide if overflow */
 
-      /*centering items*/
+      /* centering items */
       justify-content: center;
       align-items: center;
     }
 
     #snowglobe {
-
-      /*sizing*/
+      /* sizing */
       width: 85vmin;
       height: 85vmin;
 
-      /*background
-      background: radial-gradient(circle at 50% 120%, #fff, #fff 20%, #4e638d);*/
-      background: url('/bg.jpg')center/cover;
-      /*round globe*/
+      /* background */
+      background: url('/bg.jpg') center/cover;
+      /* round globe */
       border-radius: 100%;
       overflow: hidden;
 
       margin: auto;
 
       box-shadow: 0px 0px 20px #FFFFFF05;
-
     }
 
     #particles {
@@ -60,8 +55,7 @@
     }
 
     @keyframes shake {
-      0%;
-
+      0%,
       100% {
         transform: rotate(0deg);
       }
@@ -83,49 +77,57 @@
       animation: shake 1s;
     }
 
-    
+    #currentSong {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #231f32;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
 </head>
 
 <body>
-  <h1> jingle your ball(s) - jeslyn</h1> 
-
+  <div style="text-align: center;">
+    <h1> Jingle the ball for a Ukulele Cover from me! <br>
+    Bear with me, this is my first week- but I've improved tons! - jeslyn</h1> 
+  </div>
   <div id="snowglobe">
     <audio id="music" preload="auto">
-      <source src="music.mp3" type="audio/ogg">
-      </source>
+      <source src="music.mp3" type="audio/ogg"></source>
     </audio>
-    <div id="particles">
-    </div>
-
-    <div id="ground">
-    </div>
-
+    <div id="particles"></div>
+    <div id="ground"></div>
   </div>
 
-  
+  <div id="currentSong" style="font-size:20px;"> Current Song: </div>
+
   <script>
-
-
     // select globe
     let globe = document.getElementById("snowglobe");
+    let currentSongDisplay = document.getElementById("currentSong");
 
-    //declare particles
     let songs = [
-      "music.mp3",
-      "music2.mp3",
-      "music3.mp3"
+      
+      { src: "music2.mp3", className: "Kiss Me - Sixpence None the Richer" },
+      { src: "music3.mp3", className: "Looking Out For You - Joy" },
+      { src: "music4.mp3", className: "Love me Like That Intro - Sam Kim" },
+      { src: "music5.mp3", className: "Fukashigi No Karte - Bunny Girl Senpai" },
+      { src: "music6.mp3", className: "Notion - The Rare Occasions " },
+      { src: "music7.mp3", className: "Seaasons - Wave to Earth" },
+      { src: "music8.mp3", className: "Worldstar Interlude - Joji" },
     ];
+
     let music = document.getElementById('music');
     let currentSongIndex = 0;
-    
+
     function setSong(index) {
-      music.src = songs[index];
+      music.src = songs[index].src;
       music.play().catch(error => {
         console.error("Error playing music:", error);
       });
+      currentSongDisplay.innerText = "Current Song: " + songs[index].className;
     }
+
     music.volume = 0.3;
 
     //function to play next song
@@ -133,13 +135,13 @@
       currentSongIndex = (currentSongIndex + 1) % songs.length;
       setSong(currentSongIndex);
     }
-    
+
     music.addEventListener("ended", playNextSong);
+
     //declare funct for calculating (gyro?) activity
     let particles;
     function calculateAcceleration(event) {
-
-      const {x, y, z} = event.accelerationIncludingGravity;
+      const { x, y, z } = event.accelerationIncludingGravity;
       const accelerationMagnitude = Math.sqrt(x * x + y * y + z * z);
       return accelerationMagnitude;
     }
@@ -148,11 +150,9 @@
       particles.play();
       globe.classList.add("shake");
 
-      music.play().catch(error => {
-        console.error("Error playing music:", error);
-      });
-      setTimeout(() => {globe.classList.remove("shake")}, 1100)
-      music.play()
+      playNextSong();
+
+      setTimeout(() => { globe.classList.remove("shake") }, 1100);
     }
 
     // Funct to request motion perms and event listner 
@@ -170,6 +170,7 @@
         window.addEventListener("devicemotion", handleMotionEvent);
       }
     }
+
     // Event handler for motion events
     function handleMotionEvent(event) {
       const acceleration = calculateAcceleration(event);
@@ -177,27 +178,23 @@
         shakeItUp();
       }
     }
+
     tsParticles.loadJSON('particles', 'particles.json')
       .then(function () {
         particles = tsParticles.domItem(0);
-        particles.pause()
+        particles.pause();
         globe.addEventListener('click', () => {
-          shakeItUp()
+          shakeItUp();
           enableMotionDetection();
         });
 
         window.addEventListener("devicemotion", (event) => {
           const acceleration = calculateAcceleration(event);
-
           if (acceleration > 23) {
-            shakeItUp()
+            shakeItUp();
           }
-        }
-        );
-
+        });
       });
-
-
   </script>
 
 </body>
