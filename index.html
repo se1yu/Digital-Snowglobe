@@ -89,7 +89,7 @@
 <body>
   <div style="text-align: center;">
     <h1> Jingle the ball for a Ukulele Cover from me! <br>
-    Bear with me, this is my first week- but I've improved tons! - jeslyn</h1> 
+    Bear with me, I started in July 2024- but I've improved tons! - jeslyn</h1> 
   </div>
   <div id="snowglobe">
     <audio id="music" preload="auto">
@@ -115,20 +115,33 @@
       { src: "music6.mp3", className: "Notion - The Rare Occasions " },
       { src: "music7.mp3", className: "Seaasons - Wave to Earth" },
       { src: "music8.mp3", className: "Worldstar Interlude - Joji" },
+      { src: "music9.mp3", className: "Pluto Projector - Rex Orange County"},
+      { src: "music10.mp3", className: "Understand - Keshi" }, 
+      { src: "music11.mp3", className: "Say Something - Keshi" },
     ];
 
     let music = document.getElementById('music');
     let currentSongIndex = 0;
-
+    
     function setSong(index) {
-      music.src = songs[index].src;
+      let song = songs[index];
+      music.src = song.src;
+      // VOluime for  last 3 louder 
+      if (song.src == "music9.mp3" || song.src == "music10.mp3" || song.src == "music11.mp3") {
+        music.volume =1;
+      }
+      else{
+        music.volume = 0.3
+      }
+
       music.play().catch(error => {
         console.error("Error playing music:", error);
       });
       currentSongDisplay.innerText = "Current Song: " + songs[index].className;
     }
 
-    music.volume = 0.3;
+   // music.volume = 0.5;
+    
 
     //function to play next song
     function playNextSong() {
